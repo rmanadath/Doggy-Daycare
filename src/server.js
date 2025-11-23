@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import { swaggerUi, swaggerSpec } from './src/swagger/swagger.js';
 
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
@@ -13,6 +14,8 @@ app.use(cors());
 app.use(morgan('tiny'));
 
 app.use(express.json());
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/api/users', userRoutes);
 app.use('/auth', authRoutes);
