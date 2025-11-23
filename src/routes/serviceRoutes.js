@@ -14,8 +14,8 @@ const {
 // All routes here require authentication
 router.get("/", auth, getAllServices);
 router.get("/:id", auth, getServiceById);
-router.post("/", auth, createService);
-router.put("/:id", auth, updateService);
+router.post("/", auth, validateServiceData, createService);
+router.put("/:id", auth, validateServiceData, updateService);
 router.delete("/:id", auth, deleteService);
 
 module.exports = router;
