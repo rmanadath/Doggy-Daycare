@@ -13,3 +13,75 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// User entity - represents daycare owners/admins
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String
+  role     String @default("Admin")
+
+  // One-to-Many relationship: One User can have many Dogs
+  dogs Dog[]
+}
+
+// Dog entity - represents dogs in the daycare
+model Dog {
+  id      Int    @id @default(autoincrement())
+  name    String
+  breed   String
+  ownerId Int
+
+  // Many-to-One relationship: Many Dogs belong to one User
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  // One-to-Many relationship: One Dog can have many Bookings
+  bookings Booking[]
+}
+
+// Booking entity - represents daycare appointments
+model Booking {
+  id           Int      @id @default(autoincrement())
+  dogId        Int
+  date         DateTime @db.Date
+  checkInTime  DateTime
+  checkOutTime DateTime
+  status       String   @default("PENDING")
+
+  // Many-to-One relationship: Many Bookings belong to one Dog
+  dog Dog @relation(fields: [dogId], references: [id], onDelete: Cascade)
+
+  // Many-to-Many relationship: Bookings can have many Services via junction table
+  services BookingService[]
+}
+
+// Service entity (Product/Service) - represents daycare services
+model Service {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  price       Decimal @db.Decimal(10, 2)
+  active      Boolean @default(true)
+
+  // Many-to-Many relationship: Services can be in many Bookings via junction table
+  bookings BookingService[]
+}
+
+// Junction table: bookingProductService
+// Resolves Many-to-Many relationship between Booking and Service
+model BookingService {
+  bookingId Int
+  serviceId Int
+  quantity  Int @default(1)
+
+  // Many-to-One relationship: Many BookingServices belong to one Booking
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  // Many-to-One relationship: Many BookingServices reference one Service
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  // Composite primary key
+  @@id([bookingId, serviceId])
+}
+ 
