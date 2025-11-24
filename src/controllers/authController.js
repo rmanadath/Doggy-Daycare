@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 
 // Hardcoded secret for development/demo only 
 const JWT_SECRET = 'dev_secret';
-const JWT_EXPIRY = '7d';
+const JWT_EXPIRY = '7d'; 
 
 export const signup = async (req, res, next) => {
   try {
