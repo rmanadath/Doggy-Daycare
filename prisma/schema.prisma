@@ -16,7 +16,7 @@ datasource db {
 
 // User entity - represents daycare owners/admins
 model User {
-  id       String @id @default(uuid())
+  id       Int    @id @default(autoincrement())
   name     String
   email    String @unique
   password String
@@ -28,10 +28,10 @@ model User {
 
 // Dog entity - represents dogs in the daycare
 model Dog {
-  id      String @id @default(uuid())
+  id      Int    @id @default(autoincrement())
   name    String
   breed   String
-  ownerId String
+  ownerId Int
 
   // Many-to-One relationship: Many Dogs belong to one User
   owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
@@ -42,8 +42,8 @@ model Dog {
 
 // Booking entity - represents daycare appointments
 model Booking {
-  id           String   @id @default(uuid())
-  dogId        String
+  id           Int      @id @default(autoincrement())
+  dogId        Int
   date         DateTime @db.Date
   checkInTime  DateTime
   checkOutTime DateTime
@@ -58,7 +58,7 @@ model Booking {
 
 // Service entity (Product/Service) - represents daycare services
 model Service {
-  id          String  @id @default(uuid())
+  id          Int     @id @default(autoincrement())
   name        String
   description String?
   price       Decimal @db.Decimal(10, 2)
@@ -71,8 +71,8 @@ model Service {
 // Junction table: bookingProductService
 // Resolves Many-to-Many relationship between Booking and Service
 model BookingService {
-  bookingId String
-  serviceId String
+  bookingId Int
+  serviceId Int
   quantity  Int @default(1)
 
   // Many-to-One relationship: Many BookingServices belong to one Booking
