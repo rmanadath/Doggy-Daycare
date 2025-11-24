@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import dogRoutes from './routes/dogRoutes.js';
 import { swaggerUi, swaggerSpec } from './src/swagger/swagger.js';
 
 import userRoutes from './src/routes/userRoutes.js';
@@ -15,6 +16,12 @@ app.use(cors());
 app.use(morgan('tiny'));
 app.use(express.json());
 
+// Routes
+app.use('/dogs', dogRoutes);
+
+// Routes
+app.use('/dogs', dogRoutes);
+
 // Swagger Docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
@@ -28,7 +35,7 @@ app.use((req, res, next) => {
   const err = new Error('Not Found');
   err.status = 404;
   next(err);
-});
+}); 
 
 // Global Error Handler
 app.use((err, req, res, next) => {
