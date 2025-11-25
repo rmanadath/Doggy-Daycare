@@ -1,8 +1,6 @@
 import prisma from "../prismaClient.js";
 import bcrypt from "bcrypt";
 
-const prisma = new PrismaClient();
-import bcrypt from 'bcrypt';
 
 // GET /users (admin only)
 export const getUsers = async (req, res, next) => {
