@@ -1,5 +1,7 @@
 // src/repositories/userRepository.js
-import prisma from '../prismaClient.js';
+import { PrismaClient } from "../generated/prisma/client.js";
+const prisma = new PrismaClient();
+
 
 export const findUserByEmail = async (email) => {
   return await prisma.user.findUnique({ where: { email } });
