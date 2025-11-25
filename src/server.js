@@ -1,15 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import dogRoutes from './routes/dogRoutes.js';
-import bookingRoutes from './routes/bookingRoutes.js';
-import { swaggerUi, swaggerSpec } from './src/swagger/swagger.js';
+import { swaggerUi, swaggerSpec } from './swagger/swagger.js';
 
-import userRoutes from './src/routes/userRoutes.js';
-import authRoutes from './src/routes/authRoutes.js';
-import serviceRoutes from './src/routes/serviceRoutes.js';
+import dogRoutes from './routes/dogRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import serviceRoutes from './routes/serviceRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,22 +17,14 @@ app.use(cors());
 app.use(morgan('tiny'));
 app.use(express.json());
 
-// Routes
-app.use('/dogs', dogRoutes);
-app.use('/api/users', userRoutes);
-app.use('/auth', authRoutes);
-
-// Routes
-app.use('/dogs', dogRoutes);
-
 // Swagger Docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
+app.use('/dogs', dogRoutes);
 app.use('/api/users', userRoutes);
 app.use('/auth', authRoutes);
 app.use('/services', serviceRoutes);
-app.use('/dogs', dogRoutes);
 app.use('/bookings', bookingRoutes);
 
 // 404 Handler
@@ -42,7 +32,7 @@ app.use((req, res, next) => {
   const err = new Error('Not Found');
   err.status = 404;
   next(err);
-}); 
+});
 
 // Global Error Handler
 app.use((err, req, res, next) => {
