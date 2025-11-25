@@ -1,6 +1,9 @@
 import prisma from '../src/prismaClient.js';
 import bcrypt from 'bcrypt';
 
+// Helper to check if user is admin (case-insensitive)
+const isAdmin = (user) => user.role?.toLowerCase() === 'admin';
+
 // GET /users/me
 export const getMe = async (req, res, next) => {
   try {
@@ -17,7 +20,7 @@ export const getMe = async (req, res, next) => {
 
 // GET /users (Admin only)
 export const getUsers = async (req, res, next) => {
-  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
+  if (!isAdmin(req.user)) return res.status(403).json({ error: 'Forbidden' });
   try {
     const users = await prisma.user.findMany({
       select: { id: true, name: true, email: true, role: true }
@@ -28,12 +31,12 @@ export const getUsers = async (req, res, next) => {
   }
 };
 
-// GET /users/:id (Admin or Owner)
+// GET /users/:id (Admin or owner)
 export const getUserById = async (req, res, next) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: 'Invalid ID' });
 
-  if (req.user.role !== 'admin' && req.user.id !== id) {
+  if (!isAdmin(req.user) && req.user.id !== id) {
     return res.status(403).json({ error: 'Forbidden' });
   }
 
@@ -51,7 +54,7 @@ export const getUserById = async (req, res, next) => {
 
 // POST /users (Admin only)
 export const createUser = async (req, res, next) => {
-  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
+  if (!isAdmin(req.user)) return res.status(403).json({ error: 'Forbidden' });
 
   const { name, email, password, role } = req.body;
   if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
@@ -70,18 +73,18 @@ export const createUser = async (req, res, next) => {
   }
 };
 
-// PUT /users/:id (Admin or Owner)
+// PUT /users/:id (Admin or owner)
 export const updateUserById = async (req, res, next) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: 'Invalid ID' });
 
-  if (req.user.role !== 'admin' && req.user.id !== id) return res.status(403).json({ error: 'Forbidden' });
+  if (!isAdmin(req.user) && req.user.id !== id) return res.status(403).json({ error: 'Forbidden' });
 
   const { name, password, role } = req.body;
   const data = {};
   if (name) data.name = name;
   if (password) data.password = await bcrypt.hash(password, 10);
-  if (role && req.user.role === 'admin') data.role = role; // Only admin can change role
+  if (role && isAdmin(req.user)) data.role = role; // Only admin can change role
 
   try {
     const updated = await prisma.user.update({
@@ -96,12 +99,12 @@ export const updateUserById = async (req, res, next) => {
   }
 };
 
-// DELETE /users/:id (Admin or Owner)
+// DELETE /users/:id (Admin or owner)
 export const deleteUserById = async (req, res, next) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: 'Invalid ID' });
 
-  if (req.user.role !== 'admin' && req.user.id !== id) return res.status(403).json({ error: 'Forbidden' });
+  if (!isAdmin(req.user) && req.user.id !== id) return res.status(403).json({ error: 'Forbidden' });
 
   try {
     await prisma.user.delete({ where: { id } });
