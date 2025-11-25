@@ -33,7 +33,7 @@ export const getUserById = async (req, res, next) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: 'Invalid ID' });
 
-  if (req.user.role !== 'Admin' && req.user.id !== id) {
+  if (req.user.role !== 'admin' && req.user.id !== id) {
     return res.status(403).json({ error: 'Forbidden' });
   }
 
@@ -51,7 +51,7 @@ export const getUserById = async (req, res, next) => {
 
 // POST /users (Admin only)
 export const createUser = async (req, res, next) => {
-  if (req.user.role !== 'Admin') return res.status(403).json({ error: 'Forbidden' });
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
 
   const { name, email, password, role } = req.body;
   if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
@@ -75,13 +75,13 @@ export const updateUserById = async (req, res, next) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: 'Invalid ID' });
 
-  if (req.user.role !== 'Admin' && req.user.id !== id) return res.status(403).json({ error: 'Forbidden' });
+  if (req.user.role !== 'admin' && req.user.id !== id) return res.status(403).json({ error: 'Forbidden' });
 
   const { name, password, role } = req.body;
   const data = {};
   if (name) data.name = name;
   if (password) data.password = await bcrypt.hash(password, 10);
-  if (role && req.user.role === 'Admin') data.role = role; // Only admin can change role
+  if (role && req.user.role === 'admin') data.role = role; // Only admin can change role
 
   try {
     const updated = await prisma.user.update({
@@ -101,7 +101,7 @@ export const deleteUserById = async (req, res, next) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: 'Invalid ID' });
 
-  if (req.user.role !== 'Admin' && req.user.id !== id) return res.status(403).json({ error: 'Forbidden' });
+  if (req.user.role !== 'admin' && req.user.id !== id) return res.status(403).json({ error: 'Forbidden' });
 
   try {
     await prisma.user.delete({ where: { id } });
