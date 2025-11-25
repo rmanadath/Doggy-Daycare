@@ -11,17 +11,18 @@ import { authenticate } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.use(authenticate); // All routes require authentication
+// All routes require authentication
+router.use(authenticate);
 
-// Current authenticated user
+// Current user
 router.get('/me', getMe);
 
-// CRUD routes
-router.get('/', getUsers);          // Admin only
-router.post('/', createUser);       // Admin only
-router.get('/:id', getUserById);    // Admin or owner
-router.put('/:id', updateUserById); // Admin or owner
-router.delete('/:id', deleteUserById); // Admin or owner
+// Admin-only / all CRUD
+router.get('/', getUsers);          
+router.post('/', createUser);       
+router.get('/:id', getUserById);    
+router.put('/:id', updateUserById); 
+router.delete('/:id', deleteUserById);
 
 export default router;
 
