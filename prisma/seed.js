@@ -1,6 +1,6 @@
 import prisma from "../src/prismaClient.js";
 
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt'; 
 
 async function main() {
   console.log('Starting seed...');
