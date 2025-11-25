@@ -1,5 +1,4 @@
 import prisma from "../prismaClient.js";
-const prisma = new PrismaClient();
 
 import bcrypt from 'bcrypt';
 

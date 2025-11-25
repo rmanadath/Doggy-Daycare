@@ -1,7 +1,5 @@
 import prisma from "../prismaClient.js";
 
-const prisma = new PrismaClient();
-
 /**
  * Get all services
  */
