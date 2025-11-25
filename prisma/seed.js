@@ -30,7 +30,7 @@ async function main() {
       name: 'John Doe',
       email: 'john@example.com',
       password: userPassword,
-      role: 'Admin',
+      role: 'user',
     },
   });
 
