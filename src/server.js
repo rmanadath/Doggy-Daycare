@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import dogRoutes from './routes/dogRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,6 +15,8 @@ app.use(express.json());
 
 // Routes
 app.use('/dogs', dogRoutes);
+app.use('/api/users', userRoutes);
+app.use('/auth', authRoutes);
 
 app.use((req, res, next) => {
   const err = new Error('Not Found');
