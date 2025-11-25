@@ -18,15 +18,6 @@ import {
 
 const router = express.Router();
 
-router.get("/", auth, getAllBookings);
-router.get("/:id", auth, getBookingById);
-router.post("/", auth, createBooking);
-router.put("/:id", auth, updateBooking);
-/**
- * @swagger
- * /bookings/{id}/status:
- *   patch:
- *     summary: Update booking status only
 router.use(authenticate);
 
 /**
@@ -102,17 +93,6 @@ router.get("/:id", getBookingById);
  *           schema:
  *             type: object
  *             required:
- *               - status
- *             properties:
- *               status:
- *                 type: string
- *                 enum: [PENDING, CONFIRMED, COMPLETED, CANCELLED]
- *     responses:
- *       200:
- *         description: Status updated successfully
- */
-router.patch("/:id/status", updateBookingStatus);
-router.delete("/:id", auth, deleteBooking);
  *               - dogId
  *               - date
  *               - checkInTime
@@ -231,6 +211,40 @@ router.post("/", createBooking);
  *         description: Booking not found
  */
 router.put("/:id", updateBooking);
+
+/**
+ * @swagger
+ * /bookings/{id}/status:
+ *   patch:
+ *     summary: Update booking status only
+ *     tags: [Bookings]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - status
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [PENDING, CONFIRMED, COMPLETED, CANCELLED]
+ *     responses:
+ *       200:
+ *         description: Status updated successfully
+ *       404:
+ *         description: Booking not found
+ */
+router.patch("/:id/status", updateBookingStatus);
 
 /**
  * @swagger
