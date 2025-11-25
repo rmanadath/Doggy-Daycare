@@ -6,14 +6,14 @@ const prisma = new PrismaClient();
  * Get all services
  */
 export const getAllServices = async () => {
-  return await prisma.productService.findMany();
+  return await prisma.service.findMany();
 };
 
 /**
  * Get service by ID
  */
 export const getServiceById = async (id) => {
-  return await prisma.productService.findUnique({
+  return await prisma.service.findUnique({
     where: { id: parseInt(id) },
   });
 };
@@ -22,7 +22,7 @@ export const getServiceById = async (id) => {
  * Create new service
  */
 export const createService = async (serviceData) => {
-  return await prisma.productService.create({
+  return await prisma.service.create({
     data: {
       name: serviceData.name,
       description: serviceData.description,
@@ -36,7 +36,7 @@ export const createService = async (serviceData) => {
  * Update service
  */
 export const updateService = async (id, serviceData) => {
-  return await prisma.productService.update({
+  return await prisma.service.update({
     where: { id: parseInt(id) },
     data: {
       ...(serviceData.name && { name: serviceData.name }),
@@ -51,7 +51,7 @@ export const updateService = async (id, serviceData) => {
  * Delete service
  */
 export const deleteService = async (id) => {
-  return await prisma.productService.delete({
+  return await prisma.service.delete({
     where: { id: parseInt(id) },
   });
 };
