@@ -1,14 +1,11 @@
 import * as bookingService from "../services/bookingService.js";
 import * as bookingLinkService from "../services/bookingServiceLinkService.js";
 
-/**
- * GET /bookings
- */
 export const getAllBookings = async (req, res, next) => {
   try {
-    const bookings = await bookingService.getAllBookings();
+    const { id: userId, role: userRole } = req.user;
+    const bookings = await bookingService.getAllBookings(userId, userRole);
 
-    // attach services + totals
     const enriched = await Promise.all(
       bookings.map(async (b) => {
         const { services, grandTotal } =
@@ -23,12 +20,10 @@ export const getAllBookings = async (req, res, next) => {
   }
 };
 
-/**
- * GET /bookings/:id
- */
 export const getBookingById = async (req, res, next) => {
   try {
-    const booking = await bookingService.getBookingById(req.params.id);
+    const { id: userId, role: userRole } = req.user;
+    const booking = await bookingService.getBookingById(req.params.id, userId, userRole);
 
     const { services, grandTotal } =
       await bookingLinkService.getBookingServicesSummary(booking.id);
@@ -38,22 +33,20 @@ export const getBookingById = async (req, res, next) => {
     if (err.message === "Booking not found") {
       return res.status(404).json({ error: err.message });
     }
+    if (err.message === "Forbidden") {
+      return res.status(403).json({ error: err.message });
+    }
     next(err);
   }
 };
 
-/**
- * POST /bookings
- */
 export const createBooking = async (req, res, next) => {
   try {
-    const userId = req.user?.id;
+    const { id: userId, role: userRole } = req.user;
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
-    // 1. Make booking row
-    const booking = await bookingService.createBooking(req.body, userId);
+    const booking = await bookingService.createBooking(req.body, userId, userRole);
 
-    // 2. Attach services
     const { services, grandTotal } =
       await bookingLinkService.attachServicesToBooking(
         booking.id,
@@ -66,29 +59,33 @@ export const createBooking = async (req, res, next) => {
       grandTotal,
     });
   } catch (err) {
-    if (err.message.includes("service")) {
+    if (err.message.includes("service") || err.message.includes("required") || 
+        err.message.includes("past") || err.message.includes("time") || 
+        err.message.includes("booked") || err.message.includes("Dog not found")) {
       return res.status(400).json({ error: err.message });
+    }
+    if (err.message.includes("only create bookings")) {
+      return res.status(403).json({ error: err.message });
+    }
+    if (err.message.includes("already booked")) {
+      return res.status(409).json({ error: err.message });
     }
     next(err);
   }
 };
 
-/**
- * PUT /bookings/:id
- */
 export const updateBooking = async (req, res, next) => {
   try {
-    const userId = req.user?.id;
+    const { id: userId, role: userRole } = req.user;
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
-    // 1. Update booking metadata
     const updatedBooking = await bookingService.updateBooking(
       req.params.id,
       req.body,
-      userId
+      userId,
+      userRole
     );
 
-    // 2. If services included → replace all services
     let servicesSummary;
     if (req.body.services) {
       servicesSummary =
@@ -97,7 +94,6 @@ export const updateBooking = async (req, res, next) => {
           req.body.services
         );
     } else {
-      // otherwise keep existing services
       servicesSummary =
         await bookingLinkService.getBookingServicesSummary(updatedBooking.id);
     }
@@ -110,24 +106,71 @@ export const updateBooking = async (req, res, next) => {
     if (err.message === "Booking not found") {
       return res.status(404).json({ error: err.message });
     }
+    if (err.message === "Forbidden") {
+      return res.status(403).json({ error: err.message });
+    }
+    if (err.message.includes("Invalid status") || err.message.includes("time")) {
+      return res.status(400).json({ error: err.message });
+    }
+    if (err.message.includes("already booked")) {
+      return res.status(409).json({ error: err.message });
+    }
     next(err);
   }
 };
 
-/**
- * DELETE /bookings/:id
- */
 export const deleteBooking = async (req, res, next) => {
   try {
-    const userId = req.user?.id;
+    const { id: userId, role: userRole } = req.user;
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
-    await bookingService.deleteBooking(req.params.id, userId);
+    await bookingService.deleteBooking(req.params.id, userId, userRole);
 
     res.status(204).send();
   } catch (err) {
     if (err.message === "Booking not found") {
       return res.status(404).json({ error: err.message });
+    }
+    if (err.message === "Forbidden") {
+      return res.status(403).json({ error: err.message });
+    }
+    next(err);
+  }
+};
+
+export const updateBookingStatus = async (req, res, next) => {
+  try {
+    const { id: userId, role: userRole } = req.user;
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({ error: 'Status is required' });
+    }
+
+    const updatedBooking = await bookingService.updateBooking(
+      req.params.id,
+      { status },
+      userId,
+      userRole
+    );
+
+    const { services, grandTotal } =
+      await bookingLinkService.getBookingServicesSummary(updatedBooking.id);
+
+    return res.json({
+      ...updatedBooking,
+      services,
+      grandTotal,
+    });
+  } catch (err) {
+    if (err.message === "Booking not found") {
+      return res.status(404).json({ error: err.message });
+    }
+    if (err.message === "Forbidden") {
+      return res.status(403).json({ error: err.message });
+    }
+    if (err.message.includes("Invalid status")) {
+      return res.status(400).json({ error: err.message });
     }
     next(err);
   }

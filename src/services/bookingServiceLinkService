@@ -1,0 +1,37 @@
+import * as bookingRepo from '../repositories/bookingRepository.js';
+
+export const attachServicesToBooking = async (bookingId: any, servicesInput: string | any[]) => {
+  // Clear existing services
+  await bookingRepo.clearServicesForBooking(bookingId);
+
+  if (!servicesInput || servicesInput.length === 0) {
+    return { services: [], grandTotal: '0.00' };
+  }
+
+  // Add new services
+  await bookingRepo.addServicesToBooking(bookingId, servicesInput);
+
+  // Fetch and calculate total
+  return await getBookingServicesSummary(bookingId);
+};
+
+export const getBookingServicesSummary = async (bookingId: any) => {
+  const bookingServices = await bookingRepo.getServicesForBooking(bookingId);
+
+  let grandTotal = 0;
+  const services = bookingServices.map((bs: any) => {
+    const subtotal = Number(bs.service.price) * bs.quantity;
+    grandTotal += subtotal;
+    return {
+      serviceId: bs.serviceId,
+      quantity: bs.quantity,
+      service: bs.service,
+      subtotal: subtotal.toFixed(2)
+    };
+  });
+
+  return {
+    services,
+    grandTotal: grandTotal.toFixed(2)
+  };
+};
