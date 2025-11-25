@@ -99,15 +99,19 @@ router.get("/:id", getBookingById);
  *             properties:
  *               dogId:
  *                 type: integer
+ *                 example: 1
  *               date:
  *                 type: string
  *                 format: date
+ *                 example: "2025-05-10"
  *               checkInTime:
  *                 type: string
  *                 format: date-time
+ *                 example: "2025-05-10T08:00:00Z"
  *               checkOutTime:
  *                 type: string
  *                 format: date-time
+ *                 example: "2025-05-10T17:30:00Z"
  *               services:
  *                 type: array
  *                 items:
@@ -115,11 +119,49 @@ router.get("/:id", getBookingById);
  *                   properties:
  *                     serviceId:
  *                       type: integer
+ *                       example: 1
  *                     quantity:
  *                       type: integer
+ *                       example: 1
+ *           example:
+ *             dogId: 1
+ *             date: "2025-05-10"
+ *             checkInTime: "2025-05-10T08:00:00Z"
+ *             checkOutTime: "2025-05-10T17:30:00Z"
+ *             services:
+ *               - serviceId: 1
+ *                 quantity: 1
+ *               - serviceId: 4
+ *                 quantity: 1
  *     responses:
  *       201:
  *         description: Booking created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 dogId:
+ *                   type: integer
+ *                   example: 1
+ *                 date:
+ *                   type: string
+ *                   format: date
+ *                   example: "2025-05-10"
+ *                 checkInTime:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2025-05-10T08:00:00Z"
+ *                 checkOutTime:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2025-05-10T17:30:00Z"
+ *                 status:
+ *                   type: string
+ *                   example: "PENDING"
  *       400:
  *         description: Invalid input
  */

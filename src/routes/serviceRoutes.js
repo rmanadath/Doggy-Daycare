@@ -86,16 +86,45 @@ router.get('/:id', serviceController.getServiceById);
  *             properties:
  *               name:
  *                 type: string
+ *                 example: "Full Day"
  *               description:
  *                 type: string
+ *                 example: "Full day daycare service"
  *               price:
  *                 type: number
+ *                 example: 45.00
  *               active:
  *                 type: boolean
  *                 default: true
+ *                 example: true
+ *           example:
+ *             name: "Full Day"
+ *             description: "Full day daycare service"
+ *             price: 45.00
+ *             active: true
  *     responses:
  *       201:
  *         description: Service created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 name:
+ *                   type: string
+ *                   example: "Full Day"
+ *                 description:
+ *                   type: string
+ *                   example: "Full day daycare service"
+ *                 price:
+ *                   type: number
+ *                   example: 45.00
+ *                 active:
+ *                   type: boolean
+ *                   example: true
  *       400:
  *         description: Invalid input
  */

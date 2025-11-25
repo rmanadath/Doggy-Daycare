@@ -33,12 +33,16 @@ router.use(authenticate);
  *                 properties:
  *                   id:
  *                     type: integer
+ *                     example: 1
  *                   name:
  *                     type: string
+ *                     example: "Buddy"
  *                   breed:
  *                     type: string
+ *                     example: "Beagle"
  *                   ownerId:
  *                     type: integer
+ *                     example: 1
  */
 router.get('/', dogController.getAllDogs);
 
@@ -84,11 +88,33 @@ router.get('/:id', dogController.getDogById);
  *             properties:
  *               name:
  *                 type: string
+ *                 example: "Buddy"
  *               breed:
  *                 type: string
+ *                 example: "Beagle"
+ *           example:
+ *             name: "Buddy"
+ *             breed: "Beagle"
  *     responses:
  *       201:
  *         description: Dog created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 name:
+ *                   type: string
+ *                   example: "Buddy"
+ *                 breed:
+ *                   type: string
+ *                   example: "Beagle"
+ *                 ownerId:
+ *                   type: integer
+ *                   example: 1
  *       400:
  *         description: Name and breed are required
  */
