@@ -13,11 +13,20 @@ const router = express.Router();
 // All routes require authentication
 router.use(authenticate);
 
-router.get('/', getUsers);                 // Admin only
-router.post('/', createUser);              // Admin only
-router.get('/:id', getUserById);           // Admin or owner
-router.put('/:id', updateUserById);        // Admin or owner
-router.delete('/:id', deleteUserById);     // Admin or owner
+// Current logged-in user
+router.get('/me', async (req, res) => {
+  try {
+    const user = await getUserById(req.user.id);
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/', getUsers);                 
+router.post('/', createUser);              
+router.get('/:id', getUserById);           
+router.put('/:id', updateUserById);        
+router.delete('/:id', deleteUserById);     
 
 export default router;
-
