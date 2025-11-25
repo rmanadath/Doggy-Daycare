@@ -1,5 +1,5 @@
 // src/repositories/userRepository.js
-import { PrismaClient } from "../generated/prisma/client.js";
+import prisma from "../prismaClient.js";
 const prisma = new PrismaClient();
 
 
