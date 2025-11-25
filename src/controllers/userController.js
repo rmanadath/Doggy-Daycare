@@ -1,7 +1,7 @@
 import prisma from '../src/prismaClient.js';
 import bcrypt from 'bcrypt';
 
-// Get current authenticated user
+// GET /users/me
 export const getMe = async (req, res, next) => {
   try {
     const user = await prisma.user.findUnique({
@@ -15,7 +15,7 @@ export const getMe = async (req, res, next) => {
   }
 };
 
-// Get all users (Admin only)
+// GET /users (Admin only)
 export const getUsers = async (req, res, next) => {
   if (req.user.role !== 'Admin') return res.status(403).json({ error: 'Forbidden' });
   try {
@@ -28,7 +28,7 @@ export const getUsers = async (req, res, next) => {
   }
 };
 
-// Get user by ID (Admin or owner)
+// GET /users/:id (Admin or Owner)
 export const getUserById = async (req, res, next) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: 'Invalid ID' });
@@ -49,7 +49,7 @@ export const getUserById = async (req, res, next) => {
   }
 };
 
-// Create a new user (Admin only)
+// POST /users (Admin only)
 export const createUser = async (req, res, next) => {
   if (req.user.role !== 'Admin') return res.status(403).json({ error: 'Forbidden' });
 
@@ -70,14 +70,12 @@ export const createUser = async (req, res, next) => {
   }
 };
 
-// Update user by ID (Admin or owner)
+// PUT /users/:id (Admin or Owner)
 export const updateUserById = async (req, res, next) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: 'Invalid ID' });
 
-  if (req.user.role !== 'Admin' && req.user.id !== id) {
-    return res.status(403).json({ error: 'Forbidden' });
-  }
+  if (req.user.role !== 'Admin' && req.user.id !== id) return res.status(403).json({ error: 'Forbidden' });
 
   const { name, password, role } = req.body;
   const data = {};
@@ -98,14 +96,12 @@ export const updateUserById = async (req, res, next) => {
   }
 };
 
-// Delete user by ID (Admin or owner)
+// DELETE /users/:id (Admin or Owner)
 export const deleteUserById = async (req, res, next) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: 'Invalid ID' });
 
-  if (req.user.role !== 'Admin' && req.user.id !== id) {
-    return res.status(403).json({ error: 'Forbidden' });
-  }
+  if (req.user.role !== 'Admin' && req.user.id !== id) return res.status(403).json({ error: 'Forbidden' });
 
   try {
     await prisma.user.delete({ where: { id } });
@@ -115,4 +111,3 @@ export const deleteUserById = async (req, res, next) => {
     next(err);
   }
 };
-
