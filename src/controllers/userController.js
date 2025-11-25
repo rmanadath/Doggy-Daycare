@@ -17,7 +17,7 @@ export const getMe = async (req, res, next) => {
 
 // GET /users (Admin only)
 export const getUsers = async (req, res, next) => {
-  if (req.user.role !== 'Admin') return res.status(403).json({ error: 'Forbidden' });
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
   try {
     const users = await prisma.user.findMany({
       select: { id: true, name: true, email: true, role: true }
