@@ -1,12 +1,10 @@
 import express from 'express';
 import * as dogController from '../controllers/dogController.js';
-// TODO: Import auth middleware when available
-// import { authenticate } from '../middleware/authMiddleware.js';
+import { authenticate } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// All routes require authentication (uncomment when auth middleware is ready)
-// router.use(authenticate);
+router.use(authenticate);
 
 // GET /dogs - Get all dogs
 router.get('/', dogController.getAllDogs);
