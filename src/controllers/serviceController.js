@@ -1,9 +1,9 @@
-const serviceService = require('../services/serviceService.js');
+import * as serviceService from '../services/serviceService.js';
 
 /**
  * GET /services
  */
-exports.getAllServices = async (req, res, next) => {
+export const getAllServices = async (req, res, next) => {
   try {
     const services = await serviceService.getAllServices();
     res.json(services);
@@ -15,7 +15,7 @@ exports.getAllServices = async (req, res, next) => {
 /**
  * GET /services/:id
  */
-exports.getServiceById = async (req, res, next) => {
+export const getServiceById = async (req, res, next) => {
   try {
     const service = await serviceService.getServiceById(req.params.id);
     res.json(service);
@@ -30,7 +30,7 @@ exports.getServiceById = async (req, res, next) => {
 /**
  * POST /services
  */
-exports.createService = async (req, res, next) => {
+export const createService = async (req, res, next) => {
   try {
     const userId = req.user?.id;
 
@@ -50,7 +50,7 @@ exports.createService = async (req, res, next) => {
 /**
  * PUT /services/:id
  */
-exports.updateService = async (req, res, next) => {
+export const updateService = async (req, res, next) => {
   try {
     const userId = req.user?.id;
 
@@ -67,7 +67,7 @@ exports.updateService = async (req, res, next) => {
 /**
  * DELETE /services/:id
  */
-exports.deleteService = async (req, res, next) => {
+export const deleteService = async (req, res, next) => {
   try {
     const userId = req.user?.id;
 

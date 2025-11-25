@@ -9,8 +9,17 @@ const options = {
       version: '1.0.0',
       description: 'API documentation for the Doggy Daycare REST API',
     },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
   },
-  apis: ['./src/routes/*.js'], // Where Swagger will look for annotations
+  apis: ['./src/routes/*.js'],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
