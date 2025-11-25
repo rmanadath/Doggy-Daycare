@@ -1,11 +1,25 @@
-// TODO: Implement JWT authentication when auth endpoints are ready
+import jwt from 'jsonwebtoken';
 
-export const authenticate = async (req, res, next) => {
-  if (process.env.NODE_ENV === 'development' && req.headers['x-test-user-id']) {
-    req.user = { id: parseInt(req.headers['x-test-user-id']) };
-    return next();
+// Hardcoded secret ONLY FOR TEMPORARY DEVELOPMENT
+// will change later
+const JWT_SECRET = 'dev_secret';
+
+export const authenticate = (req, res, next) => {
+  const header = req.headers.authorization;
+  if (!header) return res.status(401).json({ error: 'Missing Authorization header' });
+
+  const parts = header.split(' ');
+  if (parts.length !== 2 || parts[0] !== 'Bearer') {
+    return res.status(401).json({ error: 'Malformed Authorization header' });
   }
 
-  res.status(401).json({ error: 'Authentication required' });
+  const token = parts[1];
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    // payload: { userId, role, iat, exp }
+    req.user = { id: payload.userId, role: payload.role };
+    return next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid or expired token' });
+  }
 };
-

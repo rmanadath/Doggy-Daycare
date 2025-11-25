@@ -8,6 +8,8 @@ import { swaggerUi, swaggerSpec } from './src/swagger/swagger.js';
 import userRoutes from './src/routes/userRoutes.js';
 import authRoutes from './src/routes/authRoutes.js';
 import serviceRoutes from './src/routes/serviceRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,6 +18,14 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(morgan('tiny'));
 app.use(express.json());
+
+// Routes
+app.use('/dogs', dogRoutes);
+app.use('/api/users', userRoutes);
+app.use('/auth', authRoutes);
+
+// Routes
+app.use('/dogs', dogRoutes);
 
 // Swagger Docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
