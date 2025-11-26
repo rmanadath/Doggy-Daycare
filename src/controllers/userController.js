@@ -1,4 +1,4 @@
-import prisma from '../src/prismaClient.js';
+import prisma from '../prismaClient.js';
 import bcrypt from 'bcrypt';
 
 // Helper to check if user is admin (case-insensitive)
